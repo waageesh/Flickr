@@ -1,0 +1,141 @@
+Key:
+29289b639133aa68cadc36eb27677b17
+
+Secret:
+00aa9e850946a96b
+
+
+image url : 
+https://farm3.staticflickr.com/2930/14379388986_05b18f4784.jpg
+
+
+https://www.flickr.com/services/api/explore/flickr.groups.pools.getPhotos
+image_JSON url:
+https://www.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=29289b639133aa68cadc36eb27677b17&group_id=2679710%40N21&format=json&nojsoncallback=1
+
+
+https://www.flickr.com/services/api/explore/flickr.urls.lookupGroup
+groupid url:
+https://www.flickr.com/services/rest/?method=flickr.urls.lookupGroup&api_key=29289b639133aa68cadc36eb27677b17&url=https%3A%2F%2Fwww.flickr.com%2Fgroups%2Fourocean2014%2F&format=json&nojsoncallback=1
+
+
+
+group1:
+https://www.flickr.com/groups/ourocean2014/
+group2:
+https://www.flickr.com/groups/printboldly/
+group3:
+https://www.flickr.com/groups/yahoosochi/
+group4:
+https://www.flickr.com/groups/flickrcarnival/
+group5:
+https://www.flickr.com/groups/momentsintime/
+
+
+include media folder settings
+https://overiq.com/django-1-10/handling-media-files-in-django/
+
+https://docs.djangoproject.com/en/3.0/ref/request-response/
+
+
+
+https://djangosnippets.org/snippets/2587/
+https://gist.github.com/anderser/2172888	
+
+
+Django bulk_create while populating ImageField
+https://stackoverflow.com/questions/43473119/django-bulk-create-while-populating-imagefield
+
+understnading more about models:
+https://www.webforefront.com/django/multiplemodelrecords.html
+
+using NameTemporaryFile for saving images
+https://docs.python.org/3/library/tempfile.html
+
+
+
+
+https://www.flickr.com/services/api/flickr.people.findByUsername.html
+https://www.flickr.com/services/api/explore/flickr.people.findByUsername
+https://www.flickr.com/services/api/flickr.tags.getListUser.html
+https://www.flickr.com/photos/134677114@N02/favorites/ 	
+https://www.flickr.com/services/api/explore/flickr.urls.lookupGroup
+https://www.flickr.com/services/api/flickr.urls.lookupGroup.htm
+https://www.flickr.com/people/flickr/groups/
+https://idratherbewriting.com/learnapidoc/docapis_flickr_example.html
+
+Main tab - Chrome:
+https://www.flickr.com/services/api/misc.urls.html
+https://www.flickr.com/services/api/explore/flickr.urls.lookupGroup
+https://www.flickr.com/services/api/explore/flickr.groups.pools.getPhotos
+https://www.flickr.com/services/api/flickr.groups.pools.getPhotos.html
+
+
+
+
+
+
+
+Annotate:
+https://docs.djangoproject.com/en/3.0/topics/db/aggregation/
+https://docs.djangoproject.com/en/3.0/ref/models/querysets/#select-for-update
+
+
+
+paginator:
+https://docs.djangoproject.com/en/3.0/topics/pagination/
+https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-django.html
+https://getbootstrap.com/docs/4.0/components/pagination/
+https://overiq.com/django-1-10/pagination-in-django/
+
+
+Urls dispatcher:
+https://docs.djangoproject.com/en/3.0/topics/http/urls/
+https://www.programiz.com/python-programming/regex
+
+import re
+
+pattern = '^([0-9]{7,7})\@[A-Z][0-9]{2,2}$'
+pattern2 = '^/api/v1/group/$'
+test_string = '2679710@N21'
+test_string2 = '/api/v1/group/'
+
+final_pattern = '^/api/v1/groups/([0-9]{7,7})\@[A-Z][0-9]{2,2}$'
+final_string  = '/api/v1/groups/2679710@N21'
+result = re.match(final_pattern, final_string)
+
+if result:
+  print("Search successful.")
+else:
+  print("Search unsuccessful.")
+
+Dealing with query string in URLDispatcher:
+https://stackoverflow.com/questions/3711349/django-and-query-string-parameters/3711911
+url in browser:
+http://example.com/get_item/?id=2&type=foo&color=bar
+
+url pattern in urlspatter variable:
+(r'^get_item/id(?P<id>\d+)$', get_item)
+
+views.py
+def get_item(request):
+    id = int(request.GET.get('id'))
+    type = request.GET.get('type', 'default')
+
+
+
+
+overwrite queryset in viewsets:
+https://stackoverflow.com/questions/29001493/how-do-you-override-a-modelviewsets-get-queryset-in-django-rest-framework-3
+
+error while over writing queryset with get_query_set() in Django:
+https://stackoverflow.com/questions/47509515/django-get-queryset-missing-1-required-positional-argument-request
+
+how to get query string in viewsets:
+https://stackoverflow.com/questions/48299466/django-rest-framework-passing-parameters-with-get-request-classed-based-views
+
+filtering on querysets in viewsets:
+http://www.tomchristie.com/rest-framework-2-docs/api-guide/filtering
+https://harrymoreno.com/2019/06/12/Overriding-Django-Rest-Framework-viewsets.html
+
+

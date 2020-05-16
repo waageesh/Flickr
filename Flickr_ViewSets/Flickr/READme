@@ -1,0 +1,380 @@
+Before creating Django project, we need Flickr API and scret key to download Inages from
+flickr gallery/groups/people .
+go to "https://www.flickr.com/services/apps/create/" and get your own API key, 
+by registering with one project name you are goint to build.
+
+Then get group id , by going to "https://www.flickr.com/services/api/explore/flickr.urls.lookupGroup" and enter api_key and url(of the group where you want images from)
+select output as JSON and click in "call method" button, with option "do not sign call" selected above
+
+you will get JSON object as below:
+
+{ "group": { "id": "2679710@N21", 
+    "groupname": { "_content": "Show Your Love of Our Ocean" } }, "stat": "ok" }
+
+where you will get group_id.
+
+below of the page, usable API for above action is generated:
+https://www.flickr.com/services/rest/?method=flickr.urls.lookupGroup&api_key=29289b639133aa68cadc36eb27677b17&url=https%3A%2F%2Fwww.flickr.com%2Fgroups%2Fourocean2014%2F&format=json&nojsoncallback=1
+
+then using this group_id, go to "https://www.flickr.com/services/api/explore/flickr.groups.pools.getPhotos"
+enter your api_key & group_id
+select output as JSON and click in "call method" button, with option "do not sign call" selected above
+
+
+below of the page, usable API for above action is generated:
+https://www.flickr.com/services/rest/?method=flickr.groups.pools.getPhotos&api_key=29289b639133aa68cadc36eb27677b17&group_id=2679710%40N21&format=json&nojsoncallback=1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+NOTE:
+project developed in windows, so commands will be used for windows
+
+--> first install virtual-environment using 
+< pip3 install virtualenv >
+
+--> create virtualenv for project as 
+< virtualenv flickr >
+activate the venv by going 
+   -- fullthrottle/scripts
+
+--> and run activate.bat as below
+C:\flickr\scripts > activate.bat
+
+After activating the venv,
+
+--> install django inside virtualenv with below command
+< pip3 install django  >
+
+--> install REST_FRAMEWORK
+< pip3 install djangorestframework >
+
+
+NOTE: we are using sqlite3 engine for our  PRJ, but to use other DB, follow as below
+------------------------------------------------------------------------------------
+if you are using any database other than default sqlite that comes with Django,
+then add it to settings file.
+example: 
+--> To use PL/SQL as database , 
+< pip install psycopg2 > inside Virtualenv
+------------------------------------------------------------------------------------
+
+--> After installing django, 
+go to main project folder and create new Django site using below command
+< django-admin startproject Flickr >
+
+
+--> create new app as below
+< python runserver startapp app_name >
+
+--> Add apps in settings.py(in project folder)
+-----------------------------------------------------------------------------------------------------------------------
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    #below are the added apps to the default given apps above 
+    'rest_framework',
+    'activity_period',
+]
+-----------------------------------------------------------------------------------------------------------------------
+
+--> add database engine for PL/SQL in settings.py for DATABASES dict variable as below
+-----------------------------------------------------------------------------------------------------------------------
+'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': '<db_name>',
+        'USER': '<username>',
+        'PASSWORD':'<db_password>',
+        'HOST' : 'localhost',
+        'PORT': '',
+    }
+-----------------------------------------------------------------------------------------------------------------------
+
+---> create models based in given JSON file in 
+period/activity_period/models.py
+we used reverse-relation in Django models here , since we have implemented foreignkey in activity model, 
+and connected this foreignkey to User model using below syntax:
+
+user = models.ForeignKey("User" , on_delete = models.DO_NOTHING , blank = True ,related_name = 'activities'  )
+
+here, related_name argument is alias name given to this model, with which we are going to use this model's
+attributes using Foreignkey and reverse-relation in django models
+
+--> then makemigrations and migrate them to db to save changes to models and replicating them to Db
+<python manage.py makemigrations>
+<python manage.py migrate>
+
+NOTE:
+whenever they are changes done to models.py , then you have to makemigrations followed by migrate
+this is followed throughout the project
+
+
+--> Create serializer.py and add 2 class(serializers) for models defined
+Serializers will convert python object to JSON object, which is forwarded to front-end
+serializers has to be created to convert python objects(created from models..py) to JSON data(serialized data),
+which is universally object notation.
+
+--> we used StringRelatedField to get fields in activity model , 
+--> we define __str__ method in activity model , and return them using this method to a
+variable defined in serializers.py as below
+
+activities = serializers.StringRelatedField(many=True) 
+
+now activities variable , will gets all fields in string format to serializers,
+which can further passed to "fields" variable in "class Meta" in serializer
+
+
+
+---------------------------
+for testing purpose, 
+
+# Register your models in admin.py as below
+admin.site.register(User)
+admin.site.register(Activity)
+
+but dont use this in production
+
+only superusers can use and access Django admin panel
+
+--> run below command to creat admin(super user) since we need admin privileges to add/delete/change record details manually
+< python manage.py createsuperuser >
+
+
+--> Develop an python code to populate data into database using custom command managament
+we have to create management folder and commands folder inside, 
+add empty __init__.py files to both folder since python needs to treat them as packages
+after adding , below is the tree structure
+
+├── admin.py
+├── apps.py
+├── __init__.py
+├── management
+│   ├── commands
+│   │   ├── __init__.py
+│   │   ├── mycommand.py
+│   │   ├── _utils.py
+│   ├── __init__.py
+├── migrations
+│   ├── 0001_initial.py
+| .....
+
+--> mycommand.py is the file which generates and pushed records into database as below
+<python3 manage.py mycommand <**kwargs> >
+ **kwargs are the arguments you have to pass based mycommand.py, here we will pass any integer value
+ to populate and push such many records into database
+
+--> pip freeze
+which gets all python packages required for the project,
+copy them into requirements.txt file and save it to project parent folder
+
+--> run the code in local to check whether project is working as expected
+<python manage.py runserver>
+above command  , will deploy our code in localhost(127.0.0.1 at 8000 port by default)
+
+--> check with url http://127.0.0.1:8000/user(which is our API)
+
+
+---------------------------
+
+
+Deploying in AWS instance:
+
+
+---------------------------
+create an instance(cloud )
+create an instance( thar runs on cloud ) after logging to amazon account
+Downloaded "project_name.pem" in the end, since it can't be downloaded after instance got created and
+you need that file to access and run server from local shell/command promt
+
+an ip-address is visible in instance allocated, copy that ip-address, here it's 54.167.159.240
+
+--> step1: connect to ec2 instance
+< ssh ec2-user@54.167.159.240 >
+< ssh -i  desktop/waageesh/django_activity_period.pem ec2-user@54.167.159.240 >
+
+it will show as below , which measn sucessfully connected
+-------------------------------------------------------------------------------------------------
+Last login: Wed Apr  8 13:51:30 2020 from 27.59.148.72
+
+       __|  __|_  )
+       _|  (     /   Amazon Linux 2 AMI
+      ___|\___|___|
+
+https://aws.amazon.com/amazon-linux-2/
+      ___|\___|___|
+
+https://aws.amazon.com/amazon-linux-2/
+1 package(s) needed for security, out of 8 available
+Run "sudo yum update" to apply all updates.
+[ec2-user@ip-172-31-88-23 ~]$
+-------------------------------------------------------------------------------------------------
+
+--> step2: copy project to the ec2 instance by opening other command prompt and executing below command
+< scp -r -i  desktop/waageesh/django_activity_period.pem project_folder_name ec2-user@54.167.159.240: >
+
+--> step3: after being copied , come back and connect to ec2 instance as in step1
+------------------------------------------------------------------------------------------------
+As this is server , some changes has to be done in
+Procfile
+settings.py
+
+changes done in Procfile:
+------------------------
+--> add Procfile to project root directory., with name "Procfile" and don't give .txt as extension even though its a text file
+
+web : gunicorn period.wsgi
+
+web is the process type declares that this process type receives web traffic when deployed., 
+gunicorn is the command needed  to run our process, it's a way for our python code to talk our webserver
+we are doing that using WSGI(Web Server gataway Interface) file, 
+so in above command <web = gunicorn period.wsgi> , we are telling gunicorn the path of WSGI file(here , its in period(our project) folder)
+we dont do any changes to this WSGI file here since its small application, but there is a variable in this WSGI file --> application, which is used by gunicorn to run our app
+In general , these Procfile contain additional processes types , 
+for eg: we might delare one for background worker process , which process items off a QUEUE etc.,
+Here we define it as normal web process
+
+Changes done in settings.py
+---------------------------
+-->add 
+STATIC_ROOT = os.path.join(BASE_DIR , 'staticfiles')
+if our project is our static project, it has to be declared in settings.py file
+--> change db credentials in below variable, since database installation in Ec2 instance will be different
+
+DATABASES = {
+
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'db_name',
+        'USER': 'user_name',
+        'PASSWORD':'db_password',
+        'HOST' : 'localhost',
+        'PORT': '',
+    }
+
+--> add
+HOST  = ['instance_ip_address']
+since we are deploying in web, we need to addd that ipaddress to access our site
+--------------------------------------------------------------------------------------------------------
+for postgresql installation in Amazon ec2 instance, 
+refer below link
+for postgresql install followed by psycopg2 in Amazon linux2
+https://installvirtual.com/install-postgresql-10-on-amazon-ec2/
+
+install using requirements.txt using 
+$sudo pip3 install -r requirements.txt
+NOTE:  psycopg2 in this txt file can't be installed if POSTGRESQL(we use this database for this project) 
+is not installed , 
+so first install database using commands mentioned in https://installvirtual.com/install-postgresql-10-on-amazon-ec2/
+------------------------------------------------------------------------------------------------------
+--> step5:
+after installing all necessary things, then some errors might occur in accessing database
+
+below are the Errors and solutions to them:
+------------------------------------------------------------------------------------------------------
+Error:
+django.db.utils.operationalerror: fatal: peer authentication failed for user "postgres"
+Solution:
+https://stackoverflow.com/questions/41757922/django-error-django-db-utils-operationalerror-fatal-peer-authentication-failed
+go pg_hba.conf file --> cd / --> find  . -name "*pg_hba.conf"
+you will get the path
+sudo vi <path_of_pg_hba.conf> 
+file will open
+
+On pg_hba.conf change
+
+# TYPE DATABASE USER ADDRESS METHOD
+local  all      all          peer
+to
+
+# TYPE DATABASE USER ADDRESS METHOD
+local  all      all          md5
+
+but this change gives to new error as below
+---------------------------------------------------------------------------------------------------------
+Error :
+Postgresql: password authentication failed for user “postgres”
+
+Solution :
+https://stackoverflow.com/questions/7695962/postgresql-password-authentication-failed-for-user-postgres
+For those who are using it first time and have no information regarding what the password is they can follow the below steps(assuming you are on ubuntu):
+
+Open the file pg_hba.conf in /etc/postgresql/9.x/main
+
+ sudo vi pg_hba.conf 
+2.edit the below line
+
+ local   all             postgres                                peer
+to
+
+ local   all             postgres                                trust
+Restart the server
+< sudo service postgresql restart > # for ubuntu based systems
+< sudo systemctl restart postgresql >
+< sudo -su postgres >
+bash-4.2$ psql
+could not change directory to "/home/ec2-user": Permission denied
+psql (10.4)
+Type "help" for help.
+
+postgres=#
+
+----------------------------------------------------------------------------------------------------
+
+--> step6: 
+after removing all errors, r
+populate records using custom command as below
+< python3 manage.py populate_activity_periods <**kwargs> >
+records , got pushed...
+
+then run 
+< python3 manage.py makemigrations >
+< python3 manage.py migrate >
+< python3 manage.py runserve 0:8000 > # since we can acess site on web as "instance_ipadress:8000" 
+
+After sucessfull run in web server ,
+copy paste 
+http://54.167.159.240:8000/user 
+in browser to see the result of required JSON object
+
+
+------------------------------------------------
+how to run application from local command promt:
+-----------------------------------------------
+
+place the .pem file path and run below command
+--> scp -r -i  django_activity_period.pem period ec2-user@54.167.159.240:
+
+then person will be connected to server, 
+where he can deploy the code using 
+--> python3 manage.py runserver 0:8000
+if the person wants to push, then use custom command as 
+--> python3 manage.py populate_activity_records 10  ####10 is the number of records person want to populate
+then again run
+--> python3 manage.py runserver 0:8000
+
+
