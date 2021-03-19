@@ -5,7 +5,7 @@ chardet==3.0.4
 colorama==0.4.3
 decorator==4.4.2
 Django==3.0.5
-djangorestframework==3.11.0
+djangorestframework==3.11.2
 flickrapi==2.4.0
 idna==2.9
 ipdb==0.13.2
